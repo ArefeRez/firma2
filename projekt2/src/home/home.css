@@ -1,4 +1,41 @@
 .title{
     color: #292929;
-    font-weight: 600;
+    font-family: "YekanBakhBold";
+    font-size: 21px;
+}
+.input-home{
+    border-radius: 8px;
+    border: 1px solid #bdbdbd;
+    font-size: 12px;
+    font-family: "YekanBakhMedium";
+    padding: 8px 10px;
+    margin: 8px 0;
+    width: 100%;
+    cursor: pointer;
+     box-sizing: border-box;
+}
+.button-content{
+    color: #efefef;
+    font-family: "YekanBakhBold";
+    margin: 8px 0 16px 0;
+    border: 1px solid #450d56;
+    background-color: #5e236c;
+    border-radius: 8px;
+    padding: 5px 0;
+}
+.button-content:hover{
+    cursor: pointer;
+    background-color: #450d56;
+    transition: 1s;
+}
+.textarea-content{
+    background-color: #faf5fe;
+    min-height: 150px;   
+  max-height: 400px;
+    width: 100%;
+    border-radius: 8px;
+    border: 1px solid #bdbdbd;
+    padding: 16px 16px;
+    font-size: 12px;
+    font-family: "YekanBakhMedium";
 }
