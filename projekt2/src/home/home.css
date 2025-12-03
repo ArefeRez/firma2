@@ -13,6 +13,7 @@
     width: 100%;
     cursor: pointer;
      box-sizing: border-box;
+     background-color: #faf5fe;
 }
 .button-content{
     color: #efefef;
