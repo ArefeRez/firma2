@@ -12,26 +12,33 @@ const Home = () => {
   const [editableText, setEditableText] = useState("");
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+  const [imageUrl, setImageUrl] = useState(null);
+
   const ref = useRef(null);
 
   const handleChange = (e) => setKeyword(e.target.value);
 
   const handleSubmit = async () => {
     if (!keyword || !value) {
-    alert("لطفاً کلیدواژه و حوزه را وارد کنید");
-    return;
+      alert("لطفاً کلیدواژه و حوزه را وارد کنید");
+      return;
     }
     try {
       const response = await fetch("/api/keywords", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword , domain: value}),
+        body: JSON.stringify({ keyword, domain: value }),
       });
       const data = await response.json();
       setResult(data);
-      setEditableText(JSON.stringify());
+      setEditableText(
+        typeof data === "string" ? data : JSON.stringify(data, null, 2)
+      );
+      setImageUrl(data.image);
+
+      setResult(data);
       setKeyword("");
-       setValue("");
+      setValue("");
     } catch (err) {
       console.error(err);
     }
@@ -60,7 +67,6 @@ const Home = () => {
         />
         <div className="w-full relative">
           <div className="relative">
-           
             <input
               className="input-home "
               type="text"
@@ -112,7 +118,13 @@ const Home = () => {
         </button>
 
         <p className="title">مدیریت تصاویر</p>
-        {/* <img src={} alt="تصویر بک‌اند" className="w-full max-w-sm rounded-[8px]" /> */}
+        {imageUrl && (
+          <img
+            src={imageUrl}
+            alt="تصویر"
+            className="w-full rounded-[8px] mt-4"
+          />
+        )}
       </div>
     </div>
   );
