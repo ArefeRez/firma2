@@ -13,7 +13,6 @@ const Home = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
   const [imageUrl, setImageUrl] = useState(null);
-
   const ref = useRef(null);
 
   const handleChange = (e) => setKeyword(e.target.value);
@@ -23,20 +22,34 @@ const Home = () => {
       alert("لطفاً کلیدواژه و حوزه را وارد کنید");
       return;
     }
+
     try {
-      const response = await fetch("/api/keywords", {
+   
+      const response = await fetch("http://127.0.0.1:8000/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ keyword, domain: value }),
       });
-      const data = await response.json();
-      setResult(data);
-      setEditableText(
-        typeof data === "string" ? data : JSON.stringify(data, null, 2)
-      );
-      setImageUrl(data.image);
 
-      setResult(data);
+      const data = await response.json();
+
+      const interval = setInterval(async () => {
+        const statusRes = await fetch(`http://127.0.0.1:8000/api/job/${data.job_id}`);
+        const statusData = await statusRes.json();
+
+        if (statusData.status === "تکمیل شد") {
+          setEditableText(statusData.result.content); 
+          setImageUrl(statusData.result.image); 
+          setResult(statusData); 
+          clearInterval(interval);
+        } else if (statusData.status === "خطا") {
+          setEditableText("خطا در تولید محتوا");
+          clearInterval(interval);
+        } else {
+          setEditableText(`وضعیت: ${statusData.status}`);
+        }
+      }, 1000);
+
       setKeyword("");
       setValue("");
     } catch (err) {
@@ -58,6 +71,7 @@ const Home = () => {
     <div className="container mx-auto justify-center border rounded-[16px] w-[30%] px-8 py-8 mt-[32px] items-start bg-[#f6eafd] border-[#989898]">
       <div className="flex flex-col">
         <p className="title">تولید محتوای سئو شده</p>
+
         <input
           className="input-home"
           type="text"
@@ -65,10 +79,12 @@ const Home = () => {
           value={keyword}
           onChange={handleChange}
         />
-        <div className="w-full relative">
+
+        
+        <div className="w-full relative" ref={ref}>
           <div className="relative">
             <input
-              className="input-home "
+              className="input-home"
               type="text"
               placeholder="حوزه مورد نظر را انتخاب کنید"
               readOnly
@@ -96,6 +112,7 @@ const Home = () => {
           )}
         </div>
 
+       
         <button onClick={handleSubmit} className="button-content">
           شروع تولید محتوا
         </button>
@@ -103,21 +120,24 @@ const Home = () => {
 
       <div>
         <p className="title">محتوای تولید شده</p>
-        {result && (
-          <textarea
-            className="textarea-content"
-            placeholder="متن خودرا وارد کنید ..."
-            name="عنوان محتوا"
-            value={editableText}
-            onChange={(e) => setEditableText(e.target.value)}
-          />
-        )}
+
+       
+        <textarea
+          className="textarea-content"
+          placeholder="متن خودرا وارد کنید ..."
+          name="عنوان محتوا"
+          value={editableText}
+          onChange={(e) => setEditableText(e.target.value)}
+        />
+
         <button className="flex items-center font-[YekanBakhMedium] text-[14px] text-[#3d3d3d] gap-1 cursor-pointer hover:text-[#292929]">
           <FiEdit />
           <p>ویرایش</p>
         </button>
 
         <p className="title">مدیریت تصاویر</p>
+
+        
         {imageUrl && (
           <img
             src={imageUrl}
@@ -131,3 +151,4 @@ const Home = () => {
 };
 
 export default Home;
+
